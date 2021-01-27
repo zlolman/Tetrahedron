@@ -59,11 +59,11 @@ void Tetrahedron::Inner_dot(double x, double y, double z)
 	if (((dot_sign[0] < 0) && (dot_sign[1] < 0) && (dot_sign[2] < 0) && (dot_sign[3] < 0))
 		|| ((dot_sign[0] > 0) && (dot_sign[1] > 0) && (dot_sign[2] > 0) && (dot_sign[3] > 0)))
 	{
-		cout << "inside the figure";
+		cout << "inside the figure\n";
 	}
 	else
 	{
-		cout << "not inside the figure";
+		cout << "not inside the figure\n";
 	}
 }
 
@@ -82,3 +82,34 @@ vector<double> Tetrahedron::Plane(vector<double> a, vector<double> b, vector<dou
 	vector<double> result = { A, B, C, D };
 	return result;
 };
+
+vector<double> Tetrahedron::Areas()
+{	
+	vector<double> areas;
+	for (int i = 0; i < 4; i++) 
+	{
+		vector<double> vec1;
+		vector<double> vec2;
+		for (int j = 0; j < 3; j++)
+		{
+			vec1.push_back(dots[(i + 1) % 4][j] - dots[i][j]);
+			vec2.push_back(dots[(i + 2) % 4][j] - dots[i][j]);
+		};
+		double a = vec1[1] * vec2[2] - vec1[2] * vec2[1];
+		double b = vec1[0] * vec2[2] - vec1[2] * vec2[0];
+		double c = vec1[0] * vec2[1] - vec1[1] * vec2[0];
+		double area = sqrt(a * a + b * b + c * c) / 2;
+		areas.push_back(area);		
+	}
+	return areas;
+}
+
+void Tetrahedron::Sphere_Center() 
+{
+	vector<double> areas = Areas();
+	double x = 0, y = 0, z = 0;
+	x = (dots[0][0] * areas[1] + dots[1][0] * areas[2] + dots[2][0] * areas[3] + dots[3][0] * areas[0]) / (areas[0] + areas[1] + areas[2] + areas[3]);
+	y = (dots[0][1] * areas[1] + dots[1][1] * areas[2] + dots[2][1] * areas[3] + dots[3][1] * areas[0]) / (areas[0] + areas[1] + areas[2] + areas[3]);
+	z = (dots[0][2] * areas[1] + dots[1][2] * areas[2] + dots[2][2] * areas[3] + dots[3][2] * areas[0]) / (areas[0] + areas[1] + areas[2] + areas[3]);
+	cout << "Sphere center {" << x << "; " << y << "; " << z << "}";
+}
